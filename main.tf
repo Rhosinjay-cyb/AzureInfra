@@ -30,7 +30,7 @@ variable "admin_password" {
 ###########################
 
 resource "azurerm_resource_group" "rg" {
-  name     = "rg-githubactions-demo"
+  name     = "rg-DevWorkload"
   location = "East US"
 }
 
