@@ -14,9 +14,9 @@ provider "azurerm" {
   features {}
 }
 
-##############################
+###########################
 # Variables
-##############################
+###########################
 
 variable "admin_password" {
   description = "Windows VM Administrator Password"
