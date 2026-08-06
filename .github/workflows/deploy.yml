@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - '**/*.tf'
-      - '.github/workflows/Deploy.yml'
+      - '.github/workflows/deploy.yml'
 
 permissions:
   id-token: write
