@@ -5,9 +5,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - '**/*.tf'
-      - '.github/workflows/deploy.yml'
 
 permissions:
   id-token: write
