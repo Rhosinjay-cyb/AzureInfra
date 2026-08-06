@@ -23,9 +23,9 @@ variable "admin_password" {
   sensitive   = true
 }
 
-##############################
+###########################
 # Resource Group
-##############################
+###########################
 
 resource "azurerm_resource_group" "rg" {
   name     = "rg-githubactions-demo"
