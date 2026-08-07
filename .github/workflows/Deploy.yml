@@ -1,4 +1,4 @@
-name: Deploy Windows VM to Azure cloud
+name: Deploy Infrastructure to Azure
 
 
 on:
