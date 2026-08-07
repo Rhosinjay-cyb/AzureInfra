@@ -1,6 +1,5 @@
 name: Deploy Infrastructure to Azure
 
-
 on:
   push:
     branches:
