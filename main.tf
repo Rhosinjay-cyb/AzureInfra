@@ -68,38 +68,6 @@ resource "azurerm_subnet" "subnet" {
   ]
 }
 
-##############################
-# Network Security Group
-##############################
-
-resource "azurerm_network_security_group" "nsg" {
-  name                = "nsg-windowsvm"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-
-  security_rule {
-    name      = "Allow-RDP"
-    priority  = 1000
-    direction = "Inbound"
-    access    = "Allow"
-    protocol  = "Tcp"
-
-    source_port_range      = "*"
-    destination_port_range = "3389"
-
-    source_address_prefix      = "197.211.59.79"
-    destination_address_prefix = "*"
-  }
-}
-
-##############################
-# Associate NSG with Subnet
-##############################
-
-resource "azurerm_subnet_network_security_group_association" "nsg_association" {
-  subnet_id                 = azurerm_subnet.subnet.id
-  network_security_group_id = azurerm_network_security_group.nsg.id
-}
 
 
 ##############################
