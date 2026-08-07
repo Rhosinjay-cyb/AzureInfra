@@ -8,14 +8,14 @@ terraform {
     }
   }
 
-backend "azurerm" {
+  backend "azurerm" {
     resource_group_name  = "rg-terraformstate"
     storage_account_name = "sacctterraformstate"
     container_name       = "contfstate"
     key                  = "AzureInfra.contfstate"
   }
 
-  }
+}
 
 
 provider "azurerm" {
@@ -111,9 +111,9 @@ resource "azurerm_network_interface" "nic" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
-depends_on = [
+  depends_on = [
     azurerm_subnet_network_security_group_association.nsg_association
-]
+  ]
   ip_configuration {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.subnet.id
@@ -158,15 +158,15 @@ resource "azurerm_windows_virtual_machine" "vm" {
 
 resource "azurerm_subnet" "bastion" {
 
-    name = "AzureBastionSubnet"
+  name = "AzureBastionSubnet"
 
-    resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = azurerm_resource_group.rg.name
 
-    virtual_network_name = azurerm_virtual_network.vnet.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
 
-    address_prefixes = [
-        "10.0.2.0/26"
-    ]
+  address_prefixes = [
+    "10.0.2.0/26"
+  ]
 }
 
 ##############################
@@ -175,15 +175,15 @@ resource "azurerm_subnet" "bastion" {
 
 resource "azurerm_public_ip" "bastion_pip" {
 
-    name = "bastion-pip"
+  name = "bastion-pip"
 
-    location = azurerm_resource_group.rg.location
+  location = azurerm_resource_group.rg.location
 
-    resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = azurerm_resource_group.rg.name
 
-    allocation_method = "Static"
+  allocation_method = "Static"
 
-    sku = "Standard"
+  sku = "Standard"
 }
 
 ##############################
@@ -192,23 +192,23 @@ resource "azurerm_public_ip" "bastion_pip" {
 
 resource "azurerm_bastion_host" "bastion" {
 
-    name = "bastion-host"
+  name = "bastion-host"
 
-    location = azurerm_resource_group.rg.location
+  location = azurerm_resource_group.rg.location
 
-    resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = azurerm_resource_group.rg.name
 
-    sku = "Basic"
+  sku = "Basic"
 
-    ip_configuration {
+  ip_configuration {
 
-        name = "configuration"
+    name = "configuration"
 
-        subnet_id = azurerm_subnet.bastion.id
+    subnet_id = azurerm_subnet.bastion.id
 
-        public_ip_address_id = azurerm_public_ip.bastion_pip.id
+    public_ip_address_id = azurerm_public_ip.bastion_pip.id
 
-    }
+  }
 }
 
 
