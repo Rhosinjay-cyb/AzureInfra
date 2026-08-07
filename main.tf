@@ -113,7 +113,7 @@ resource "azurerm_network_interface" "nic" {
 
 depends_on = [
     azurerm_subnet_network_security_group_association.nsg_association
-
+]
   ip_configuration {
     name                          = "internal"
     subnet_id                     = azurerm_subnet.subnet.id
