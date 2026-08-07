@@ -102,20 +102,6 @@ resource "azurerm_subnet_network_security_group_association" "nsg_association" {
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
-
-##############################
-# Public IP
-##############################
-
-resource "azurerm_public_ip" "pip" {
-  name                = "vm-public-ip"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-
-  allocation_method = "Static"
-  sku               = "Standard"
-}
-
 ##############################
 # Network Interface
 ##############################
@@ -165,6 +151,66 @@ resource "azurerm_windows_virtual_machine" "vm" {
 }
 
 ##############################
+# Azure Bastion Subnet
+##############################
+
+resource "azurerm_subnet" "bastion" {
+
+    name = "AzureBastionSubnet"
+
+    resource_group_name = azurerm_resource_group.rg.name
+
+    virtual_network_name = azurerm_virtual_network.vnet.name
+
+    address_prefixes = [
+        "10.0.2.0/26"
+    ]
+}
+
+##############################
+# Public IP for Azure Bastion 
+##############################
+
+resource "azurerm_public_ip" "bastion_pip" {
+
+    name = "bastion-pip"
+
+    location = azurerm_resource_group.rg.location
+
+    resource_group_name = azurerm_resource_group.rg.name
+
+    allocation_method = "Static"
+
+    sku = "Standard"
+}
+
+##############################
+# Azure Bastion
+##############################
+
+resource "azurerm_bastion_host" "bastion" {
+
+    name = "bastion-host"
+
+    location = azurerm_resource_group.rg.location
+
+    resource_group_name = azurerm_resource_group.rg.name
+
+    sku = "Basic"
+
+    ip_configuration {
+
+        name = "configuration"
+
+        subnet_id = azurerm_subnet.bastion.id
+
+        public_ip_address_id = azurerm_public_ip.bastion_pip.id
+
+    }
+}
+
+
+##############################
 # Outputs
 ##############################
 
@@ -176,7 +222,7 @@ output "vm_name" {
   value = azurerm_windows_virtual_machine.vm.name
 }
 
-output "public_ip" {
-  value = azurerm_public_ip.pip.ip_address
+output "bastion_public_ip" {
+  value = azurerm_public_ip.bastion_pip.ip_address
 }
 
