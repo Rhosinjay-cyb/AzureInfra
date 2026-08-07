@@ -13,20 +13,19 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  TF_VAR_admin_password: ${{ secrets.TF_VAR_admin_password }}
 
 jobs:
-  terraform:
-    name: Deploy Infrastructure
+  terraform-plan:
+    name: Terraform Plan
     runs-on: ubuntu-latest
-
-    env:
-      TF_VAR_admin_password: ${{ secrets.TF_VAR_admin_password }}
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Login to Azure
+      - name: Azure Login (OIDC)
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -35,11 +34,12 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: latest
 
       - name: Terraform Init
         run: terraform init
+
+      - name: Check Terraform Formatting
+        run: terraform fmt -check -recursive
 
       - name: Terraform Validate
         run: terraform validate
@@ -54,6 +54,43 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: tfplan
+          retention-days: 1
+
+  terraform-apply:
+    name: Terraform Apply
+    needs: terraform-plan
+    runs-on: ubuntu-latest
+
+    environment:
+      name: Production
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Download Terraform Plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
