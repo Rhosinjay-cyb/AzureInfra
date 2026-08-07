@@ -44,6 +44,13 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform
+          soft_fail: false
+
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
