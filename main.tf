@@ -29,7 +29,7 @@ variable "admin_password" {
 ###########################
 
 resource "azurerm_resource_group" "rg" {
-  name     = "rg-DevWorkload"
+  name     = "rg-DevWorkloads"
   location = "East US"
 }
 
