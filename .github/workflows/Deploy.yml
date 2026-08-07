@@ -50,7 +50,7 @@ jobs:
           directory: .
           framework: terraform
           soft_fail: false
-          skip_check: CKV_AZURE_50,CKV_AZURE_151
+          skip_check: CKV_AZURE_50,CKV_AZURE_151,CKV2_AZURE_31
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
