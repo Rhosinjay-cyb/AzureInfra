@@ -58,7 +58,20 @@ Afterwards, the identity is also configured with respect to branch where the wor
 
 ### Role Assignment of the identity of the GitHub Workflow
 
-The service principal was assigned the appropriate Azure RBAC 
+The service principal was assigned the appropriate Azure RBAC, basically the role that will required to deploy the infrastructure to Azure. In this case, the service principal is assigned the contributor role.
 
+
+### Secrets Management on Github
+
+The secrets thar are used in the OIDC to Azure are stored in GitHub. Likewise, the password of one the infrastucture (virtual machine) to be deployed is also stored as a secret. 
+
+### Secret Reference in the Github workflow Deploy.yml file
+
+The secrets stored in the repository secret are referenced in the Deploy.yml file while the password is referenced in the main.tf file. The former is utilized by the workflow to authenticate against Azure while the latter will be loaded to the Virtual machine during allowing access to the VM.
+
+
+### Terraform State Configuration with Backend 
+
+A storage account was created alongside a container in it. The essence is to store the 
 ![image](Images/A.Rule.png)
 
