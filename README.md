@@ -43,10 +43,22 @@ The Terraform file (main.tf) which contains the infrastructure to be deployed to
 
 Note: The workflow file must be in the .github/workflows folder for the worflow to work effectively.
 
-### App Registration ( GitHub Workflow) on Microsoft Entra ID
+### App Registration (GitHub Workflow) on Microsoft Entra ID
 
- 
+For seamless operation of the GitHub workflow, it is first of all registered in Microsoft Entra ID as a service principal using 'App Registrations'. This identity (service principal) will be used to authenticate to Azure, Terraform will then make use of the session to deploy the infrastructure in Azure.
 
+
+The registered service principal is 
+
+### Configuring OIDC Authentication
+
+After the identity has been registered, it was also configured for its purpose. The identity is being configured to connect to Azure via Open-ID connect. The purpose, basically to deploy resources was specified in the options.
+
+Afterwards, the identity is also configured with respect to branch where the workflow originates.
+
+### Role Assignment of the identity of the GitHub Workflow
+
+The service principal was assigned the appropriate Azure RBAC 
 
 ![image](Images/A.Rule.png)
 
