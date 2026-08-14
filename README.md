@@ -25,10 +25,13 @@ Azure, Checkov, Codespace, GitHub GitHub Action, Microsoft Entra ID, Terraform
 * Integrating Terraform file formatting and Manual Approval to the Pipeline
 
 
-## Background Information
+## Background
 
-The Dev team of a fictional organization has always reported the issue of infrastructure deployments with inherent security misconfigurations due to manual deployments alongside longer (mean-time-to-deploy) MTTD. This has affected the productivity of the team as well as undermining the security posture of the company's digital environment. Finding the solution to the problem was the motivation for this project. This project utilizes Terraform IaC for provisioning of Azure infrastructure through a GitHub Action CI/CD pipeline. It equally integrates Checkov to the workflow to detect misconfigurations before deployment alongside an approval ensuring every deployments are reviewed and authorised. The general workflow of this project starts from Github when a push, it then goes ahead to install te
+The Dev team of a fictional organization has always reported the issue of infrastructure deployments with inherent security misconfigurations due to manual deployments alongside longer (mean-time-to-deploy) MTTD. This has affected the productivity of the team as well as undermining the security posture of the company's digital environment. Finding the solution to the problem was the motivation for this project. This project utilizes Terraform IaC for provisioning of Azure infrastructure through a GitHub Action CI/CD pipeline. It equally integrates Checkov to the workflow to detect misconfigurations before deployment alongside an approval ensuring every deployments are reviewed and authorised.
 
+The general workflow of this project starts when a push is made to the GitHub branch, this triggers the workflow to run each of the actions specified in it. The main action in the workflow is to logging-in to Azure, Setting-up Terraform and deploying the infrastructure into Azure. A storage account was provisioned to store the terrfaform state, this helps terraform to keep an inventory of infrastructure already provisioned, this prevents conflict during deployments thereby strengthening the reliability of this solution.
+
+Afterwards, security checks was also integrated into the workflow using Checkov to identify misconfigurations and eliminate them before deployments. To make this solution fit for production standard the terraform files are being formatted and the workflow was modified to require approval before deployment. 
 ## Steps Taken
 
 The steps taken are in the following order.
