@@ -32,6 +32,7 @@ The Dev team of a fictional organization has always reported the issue of infras
 The general workflow of this project starts when a push is made to the GitHub branch, this triggers the workflow to run each of the actions specified in it. The main action in the workflow is to logging-in to Azure, Setting-up Terraform and deploying the infrastructure into Azure. A storage account was provisioned to store the terrfaform state, this helps terraform to keep an inventory of infrastructure already provisioned, this prevents conflict during deployments thereby strengthening the reliability of this solution.
 
 Afterwards, security checks was also integrated into the workflow using Checkov to identify misconfigurations and eliminate them before deployments. To make this solution fit for production standard the terraform files are being formatted and the workflow was modified to require approval before deployment. 
+
 ## Steps Taken
 
 The steps taken are in the following order.
@@ -44,7 +45,7 @@ Note: The workflow file must be in the .github/workflows folder for the worflow 
 
 ### App Registration ( GitHub Workflow) on Microsoft Entra ID
 
-It is quite important to understand the general workflow of this operation to better understand how to design it. 
+ 
 
 
 ![image](Images/A.Rule.png)
