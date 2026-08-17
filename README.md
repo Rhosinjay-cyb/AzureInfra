@@ -86,7 +86,9 @@ Below shows the failure that could have occur if the terraform state was not in 
 
 ### integrating Security to the Workflow with Checkov
 
-To integrate security with the workflow, the resource group containig the infrastructure was deleted to create a clean slate. 
+In integrating security with the workflow using Checkov, the resource group containig the infrastructure was deleted to create a clean slate. The main function of Checkov is to scan through the terraform files (main.tf) to identify any misconfiguration or security weakness. If any of it is found as a failed check, the workflow stops immediately; requiring the rectification of the misconfiguration manually. Sometimes, the failed checks could also be skipped if it seems not to be applicable. 
+
+Checkov 
 
  ![image](Images/A.Rule.png)
 
