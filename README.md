@@ -105,6 +105,24 @@ Having skipped the failed check, the workflow was triggered to run again.
 This time around the workflow was succesfully completed.
 
 
+### Integrating Terraform file formatting and Manual Approval to the Pipeline
+
+Having successfully integrated security to the workflow, extra efforts was spent in making the solution fit for production standard. Basically, this involves formating the terraform files and requiring approval for the deployments. 
+
+The terraform file was formatted with the 'terraform fmt check' command on codespace. However, some essential libraries including terraform were installed before running the command. After formatting the terraform file, the update was committed and pushed to the main branch.
+
+To modify the workflow for the new development, the 'terraform fmt check' command was added to the workflow, this command checks if the terraform file is formatted, and proceeds to thenext action if 'true' and exits if false. 
+
+The second development is to enable the workflow request for approval before implementing the 'terraform apply' command, basically, deploying the infrastructure.
+
+To achieve this, a new environment is created on GitHub and a federated certifiate is created for it in Azure while using the earlier registered app.
+
+Completing the configuration, basically, chosing the user that will approve the deployments. 
+
+Updating this changes led to new updates, and pushing it to the branch triggered the workflow thereby ruuning it.
+
+
+
 
  ![image](Images/A.Rule.png)
 
