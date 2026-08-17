@@ -21,7 +21,7 @@ Azure, Checkov, Codespace, GitHub GitHub Action, Microsoft Entra ID, Terraform
 * Secret Reference in the Github workflow yaml file
 * Terraform State Configuration with Backend 
 * Testing of the CI/CD pipeline
-* integrating Security to the Pipeline with Checkov
+* integrating Security to the workflow with Checkov
 * Integrating Terraform file formatting and Manual Approval to the Pipeline
 
 
@@ -72,6 +72,21 @@ The secrets stored in the repository secret are referenced in the Deploy.yml fil
 
 ### Terraform State Configuration with Backend 
 
-A storage account was created alongside a container in it. The essence is to store the 
-![image](Images/A.Rule.png)
+A storage account was created alongside a container in it. The main function of this provision to store terraform state. This state is refreshed during a new provision to acquire an inventory of existing infrastructure thereby preventing conflict during provisioning and enhancing the reliability of this solution.
+
+Note: The deployment runs on an ephemeral runner, with the terraform state, terrafrom has a memory to store the details of already provisioned infrastructure.
+
+ ### Testing of the CI/CD pipeline
+
+ With every neccessary settings in place the solution is tested, by simply pushing to the main branch of this repository. Afterwards the workflow could be seen running. Here is the result of the workflow in Azure.
+
+To put the terraform state to test, the terraform file was updated with a new resource that needs to be deployed, in this case a network security group. Updating the main.tf file teiggered the GitHub workflow which could be seen running. The results showed that the terraform state helped terraform to identify that other resources already exists in Azure while NSG is missing. This led to the deployment of NSG only. This terraform state did not only prevent deployment conflict but also saved time and allowed the reusage of the terraform file. 
+
+Below shows the failure that could have occur if the terraform state was not in place.
+
+### integrating Security to the Workflow with Checkov
+
+To integrate security with the workflow, the resource group containig the infrastructure was deleted to create a clean slate. 
+
+ ![image](Images/A.Rule.png)
 
