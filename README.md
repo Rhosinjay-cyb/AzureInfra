@@ -88,7 +88,23 @@ Below shows the failure that could have occur if the terraform state was not in 
 
 In integrating security with the workflow using Checkov, the resource group containig the infrastructure was deleted to create a clean slate. The main function of Checkov is to scan through the terraform files (main.tf) to identify any misconfiguration or security weakness. If any of it is found as a failed check, the workflow stops immediately; requiring the rectification of the misconfiguration manually. Sometimes, the failed checks could also be skipped if it seems not to be applicable. 
 
-Checkov 
+Checkov is being integrated to the workflow. In this new workflow, Checkov is being installed to scan the terraform files before terraform plan occurs. This allow Checkov to detect misconfigurations before 'terraform plan' command and 'terraform apply' thereafter.
+
+With the modification of the workflow file, a new push is made to the branch which triggers the workflow. The workflow than started to run but stop after a while. This was due to failed checks flagged by Checkov.
+
+Three failed checks were found in total. Two of them are not applicable while the last one was. The last one requires that the NIC of the virtual machine should not be assigned a public IP. This security check will prevent internet-routed traffic to the VM thereby reducing surface attack.
+
+Removing the public address will prevent further connection to the VM via RDP over the internet. To sustain seamless access to the VM, Azure Bastion is provisioned. Similarly other failed checks are skipped.
+
+The terraform file was updated to add Azure Bastion including its subnet (AzureBastionSubnet). The workflow was triggered with the new update hence its began to ran.
+
+Another failed check was flagged by checkov, this time around it was because the AzureBastionSubnet was not associated with an NSG. Attaching every subnet to a particular NSG will allow an NSG security rule to be applied to the subnet or the infrastructure in it. To reduce the complexity of this solution the failed check was skipped.
+
+Having skipped the failed check, the workflow was triggered to run again. 
+
+This time around the workflow was succesfully completed.
+
+
 
  ![image](Images/A.Rule.png)
 
