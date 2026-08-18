@@ -127,9 +127,29 @@ Here is the result of the workflow in Azure, showing the succesful deployment of
 
 ![image](Images/sucrun3.png)
 
-To put the terraform state to test, the terraform file was updated with a new resource that needs to be deployed, in this case a network security group. Updating the main.tf file teiggered the GitHub workflow which could be seen running. The results showed that the terraform state helped terraform to identify that other resources already exists in Azure while NSG is missing. This led to the deployment of NSG only. This terraform state did not only prevent deployment conflict but also saved time and allowed the reusage of the terraform file. 
+Attempt was made to logon to the VM, but was unsuccessful.
 
-Below shows the failure that could have occur if the terraform state was not in place.
+![image](Images/unable2connect2.png)
+
+This error was troubleshot and it was discovered that the RDP port of the VM was not exposed to the internet. To expose the port, an NSG was created and associated with the subnet of the VM then a security rule was created to expose the port to the internet.
+
+To accomplish this task easily, the main.tf file was updated with the new infrastructure and pushed to the main branch,thereby triggering the workflow. 
+
+![image](Images/AttachNSG2.png)
+
+Here the benefit of the terraform state is been demonstrated as only the newly added infrastructure was provisioned, thereby preventing conflict and saving time.
+
+![image](Images/sucrun4.png)
+
+Over here is the newly created NSG and its security rule.
+
+![image](Images/NSGsuc.png)
+
+Had it been that the terraform state was not provisioned and attempt to reuse the main.tf file would have led into an error like the one below.
+
+![image](Images/AttachNSGError.png)
+
+Note: Updating the main.tf file triggered the GitHub workflow which could be seen running. The results showed that the terraform state helped terraform to identify that other resources already exists in Azure while NSG is missing. This led to the deployment of NSG only. This terraform state did not only prevent deployment conflict but also saved time and allowed the reusage of the terraform file. 
 
 ### integrating Security to the Workflow with Checkov
 
