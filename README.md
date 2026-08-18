@@ -197,12 +197,21 @@ Another failed check was flagged by checkov, this time around it was because the
 
 Having skipped the failed check, the workflow was triggered to run again but failed because two resources which are dependent on each other were deployed concurrently. To prevent this error, the workflow was updated to ensure the resources were deployed simultaneously.
 
+![image](Images/chkvrem9.png)
 
+With the new update, the workflow ran successfully.
 
+![image](Images/chkvrem10.png)
 
+Here is the list of resources being deployed in Azure
 
-This time around the workflow was succesfully completed.
+![image](Images/infra2.png)
 
+An attempt to logon to the VM via Azure Bastion was succesful.
+
+![image](Images/LVBastion.png)
+![image](Images/logonsuc2.png)
+![image](Images/logonsuc3.png)
 
 ### Integrating Terraform file formatting and Manual Approval to the Pipeline
 
