@@ -158,7 +158,7 @@ With the implementation of the NSG and the appropriate security rule, the VM was
 
 ### integrating Security to the Workflow with Checkov
 
-In integrating security with the workflow using Checkov, the resource group containig the infrastructure was deleted to create a clean slate. The main function of Checkov is to scan through the terraform files (main.tf) to identify any misconfiguration or security weakness. If any of it is found as a failed check, the workflow stops immediately; requiring the rectification of the misconfiguration manually. Sometimes, the failed checks could also be skipped if it seems not to be applicable. 
+In integrating security with the workflow using Checkov, the resource group containing the infrastructure was deleted to create a clean slate. The main function of Checkov is to scan through the terraform files (main.tf) to identify any misconfiguration or security weakness. If any of it is found as a failed check, the workflow stops immediately; requiring the rectification of the misconfiguration manually. Sometimes, the failed checks could also be skipped if it seems not to be applicable. 
 
 Checkov is being integrated to the workflow. 
 
@@ -176,9 +176,10 @@ Three failed checks were found in total. Two of them are not applicable while th
 ![image](Images/chkverr2.png)
 ![image](Images/chkverr3.png)
 
-Removing the public address will prevent further connection to the VM via RDP over the internet. To sustain seamless access to the VM, Azure Bastion is provisioned.
+Removing the public address from the infrastructure and disassociating it from the NIC will prevent further connection to the VM via RDP over the internet. To maintain seamless access to the VM, Azure Bastion is provisioned.
 
 ![image](Images/chkvrem.png)
+![image](Images/chkvrem5.png)
 
 Similarly other failed checks are skipped.
 
@@ -186,11 +187,19 @@ Similarly other failed checks are skipped.
 
 The terraform file was updated to add Azure Bastion including its subnet (AzureBastionSubnet). The workflow was triggered with the new update hence its began to ran.
 
-
+![image](Images/chkvrem2.png)
+![image](Images/chkvrem3.png)
 
 Another failed check was flagged by checkov, this time around it was because the AzureBastionSubnet was not associated with an NSG. Attaching every subnet to a particular NSG will allow an NSG security rule to be applied to the subnet or the infrastructure in it. To reduce the complexity of this solution the failed check was skipped.
 
-Having skipped the failed check, the workflow was triggered to run again. 
+![image](Images/chkvrem6.png)
+![image](Images/chkvrem7.png)
+
+Having skipped the failed check, the workflow was triggered to run again but failed because two resources which are dependent on each other were deployed concurrently. To prevent this error, the workflow was updated to ensure the resources were deployed simultaneously.
+
+
+
+
 
 This time around the workflow was succesfully completed.
 
