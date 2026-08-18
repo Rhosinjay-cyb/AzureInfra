@@ -41,44 +41,91 @@ The steps taken are in the following order.
 
 The Terraform file (main.tf) which contains the infrastructure to be deployed to Azure and the workflow file (Deploy.yml) were created in the repository. The GitHub Action is the CI/CD tool used in this project to automate the deployment of infrastructure specified in main.tf file to Azure. Hence, the Deploy.yml file relies on GitHub Action to execute each of the jobs specified in it. 
 
+ ![image](Images/Githubfile.png)
+
 Note: The workflow file must be in the .github/workflows folder for the worflow to work effectively.
+
+Here is a snippet of what the terraform files looks like
+
+ ![image](Images/Deployments1.png)
+ ![image](Images/Deployments2.png)
 
 ### App Registration (GitHub Workflow) on Microsoft Entra ID
 
 For seamless operation of the GitHub workflow, it is first of all registered in Microsoft Entra ID as a service principal using 'App Registrations'. This identity (service principal) will be used to authenticate to Azure, Terraform will then make use of the session to deploy the infrastructure in Azure.
 
+![image](Images/AppReg.png)
 
-The registered service principal is 
+After registering the service principal, it is assigned a unique application (client) ID. The next step is to configure a certificate (authentication) for the service principal.
+
+![image](Images/Config_cert.png)
 
 ### Configuring OIDC Authentication
 
-After the identity has been registered, it was also configured for its purpose. The identity is being configured to connect to Azure via Open-ID connect. The purpose, basically to deploy resources was specified in the options.
+The identity is being configured to authenticate seamlessly against Azure via Open-ID connect by adding a credential and specifying its purpose, basically to deploy Azure resources.
 
-Afterwards, the identity is also configured with respect to branch where the workflow originates.
+![image](Images/Config_cert2.png)
+![image](Images/Config_cert3.png)
+
+Afterwards, the identity is also configured with respect to branch where the workflow originates from.
+
+![image](Images/Config_cert4.png)
+![image](Images/Config_cert5.png)
+
 
 ### Role Assignment of the identity of the GitHub Workflow
 
-The service principal was assigned the appropriate Azure RBAC, basically the role that will required to deploy the infrastructure to Azure. In this case, the service principal is assigned the contributor role.
+The service principal was assigned the appropriate Azure role-based access control (RBAC), basically the role that will required to deploy the infrastructure to Azure. In this case, the service principal is assigned the contributor role.
 
+![image](Images/Assignrole.png)
+![image](Images/Assignrole2.png)
+![image](Images/Assignrole3.png)
+![image](Images/Assignrole4.png)
+![image](Images/Assignrole5.png)
 
 ### Secrets Management on Github
 
-The secrets thar are used in the OIDC to Azure are stored in GitHub. Likewise, the password of one the infrastucture (virtual machine) to be deployed is also stored as a secret. 
+The secrets that would be used in the OIDC to Azure are stored in GitHub. Likewise, the password of one the infrastucture (virtual machine) to be deployed were stored as a secret on Azure. During the deployments the password would be integrated with the virtual machine.
+
+![image](Images/Config_secret.png)
+![image](Images/Secrets.png)
+
+The application (client) and tenant (directory) ID are gotten from the registered app while the Azure Subscription ID is obtain from the Azure Subsrciption's page. The Azure Subscription ID is used to identify where to provision the resources while the other IDs are used to identify the service principal and the directory that will provide the token session during authentication.
+
+![image](Images/AzureSub.png)
 
 ### Secret Reference in the Github workflow Deploy.yml file
 
-The secrets stored in the repository secret are referenced in the Deploy.yml file while the password is referenced in the main.tf file. The former is utilized by the workflow to authenticate against Azure while the latter will be loaded to the Virtual machine during allowing access to the VM.
+The secrets stored in the repository secret on GitHub are referenced in the Deploy.yml file while the password is referenced in the main.tf file. The former is utilized by the workflow to authenticate against Azure while the latter will be loaded to the Virtual machine during deployment allowing access to the VM.
 
+![image](Images/ymlfile2.png)
 
-### Terraform State Configuration with Backend 
+### Terraform State Configuration with a storage account 
 
-A storage account was created alongside a container in it. The main function of this provision to store terraform state. This state is refreshed during a new provision to acquire an inventory of existing infrastructure thereby preventing conflict during provisioning and enhancing the reliability of this solution.
+For every deployment terraform runs on an ephemeral runner, as a result the terraform state are not stored. The drawback of this situation is that deployment conflicts will arise if the terraform file contains infrastructure that are already deployed which also prevents the reusability of the file. Getting around this will require the provisioning of a terraform state to store the details of already provisioned infrastructure.
 
-Note: The deployment runs on an ephemeral runner, with the terraform state, terrafrom has a memory to store the details of already provisioned infrastructure.
+Firstly, a new resource group was created, then a storage account and then a container. 
+
+![image](Images/rgtfstate.png)
+![image](Images/satfstate.png)
+![image](Images/contfstate.png)
+
+Finally, the new provision is referenced in the terraform file by updating the main.tf file, this ensures terraform refreshes its state during deployments 
+
+![image](Images/reftfstate.png)
+
+The main function of this provision to store terraform state. This state is refreshed during a new deployment to acquire an inventory of existing infrastructure and compares it with what it is about to deploy (output of 'terraform plan' command), it ignores the infrastructure that are common to both parties and deploy ('terraform apply') the unique ones, thereby preventing conflict during provisioning and enhancing the reliability of this solution.
 
  ### Testing of the CI/CD pipeline
 
- With every neccessary settings in place the solution is tested, by simply pushing to the main branch of this repository. Afterwards the workflow could be seen running. Here is the result of the workflow in Azure.
+As mentioned earlier that this workflow is triggered whenever a push is made to its main branch. The main.tf file was just updated with the terraform state. Pushing it to the main branch simply triggers and run the workflow. Afterwards the workflow could be seen running.
+
+![image](Images/sucrun.png)
+![image](Images/sucrun2.png)
+
+Here is the result of the workflow in Azure, showing the succesful deployment of the infrastructure.
+
+![image](Images/sucrun3.png)
 
 To put the terraform state to test, the terraform file was updated with a new resource that needs to be deployed, in this case a network security group. Updating the main.tf file teiggered the GitHub workflow which could be seen running. The results showed that the terraform state helped terraform to identify that other resources already exists in Azure while NSG is missing. This led to the deployment of NSG only. This terraform state did not only prevent deployment conflict but also saved time and allowed the reusage of the terraform file. 
 
@@ -124,5 +171,5 @@ Updating this changes led to new updates, and pushing it to the branch triggered
 
 
 
- ![image](Images/A.Rule.png)
+
 
