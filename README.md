@@ -98,7 +98,7 @@ The application (client) and tenant (directory) ID are gotten from the registere
 
 The secrets stored in the repository secret on GitHub are referenced in the Deploy.yml file while the password is referenced in the main.tf file. The former is utilized by the workflow to authenticate against Azure while the latter will be loaded to the Virtual machine during deployment allowing access to the VM.
 
-![image](Images/ymlfile2.png)
+![image](Images/ymfile2.png)
 
 ### Terraform State Configuration with a storage account 
 
