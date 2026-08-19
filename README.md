@@ -52,7 +52,7 @@ Here is a snippet of what the terraform file containing the list of resources to
 
 ### App Registration (GitHub Workflow) on Microsoft Entra ID
 
-For seamless operation of the GitHub workflow, it was firstly registered in Microsoft Entra ID as a service principal using 'App Registrations'. This identity (service principal) will be used to authenticate against Microsoft Entra ID where them provides a token session that allows the workflow to connect to Azure, Terraform then utilizes the session to deploy the infrastructure in Azure.
+For seamless operation of the GitHub workflow, it was firstly registered in Microsoft Entra ID as a service principal using 'App Registrations'. This identity (service principal) will be used to authenticate against Microsoft Entra ID which provides Azure access token, Terraform then uses this authenticated session through the AzureRM provider to communicate with Azure Resource Manager and deploy the infrastructure defined in the Terraform file.
 
 ![image](Images/AppReg.png)
 
@@ -62,12 +62,12 @@ After registering the service principal, it is assigned a unique application (cl
 
 ### Configuring OIDC Authentication
 
-The identity is being configured to authenticate seamlessly against Azure via Open-ID connect by adding a credential and specifying its purpose, basically to deploy Azure resources.
+The identity is being configured to authenticate seamlessly against, Microsoft Entra ID using Open-ID connect. This was achieved clicking on 'add a credential' and specifying its purpose, basically to deploy Azure resources.
 
 ![image](Images/Config_cert2.png)
 ![image](Images/Config_cert3.png)
 
-Afterwards, the identity is also configured with respect to branch where the workflow originates from.
+Afterwards, the identity was also configured with respect to branch where the workflow originates from.
 
 ![image](Images/Config_cert4.png)
 ![image](Images/Config_cert5.png)
@@ -75,7 +75,7 @@ Afterwards, the identity is also configured with respect to branch where the wor
 
 ### Role Assignment of the identity of the GitHub Workflow
 
-The service principal was assigned the appropriate Azure role-based access control (RBAC), basically the role that will required to deploy the infrastructure to Azure. In this case, the service principal is assigned the contributor role.
+The service principal was assigned the appropriate Azure role-based access control (RBAC). Basically, the role that will required to deploy the infrastructure to Azure. In this case, the service principal was assigned the contributor role.
 
 ![image](Images/Assignrole.png)
 ![image](Images/Assignrole2.png)
@@ -85,24 +85,24 @@ The service principal was assigned the appropriate Azure role-based access contr
 
 ### Secrets Management on Github
 
-The secrets that would be used in the OIDC to Azure are stored in GitHub. Likewise, the password of one the infrastucture (virtual machine) to be deployed were stored as a secret on Azure. During the deployments the password would be integrated with the virtual machine.
+The secrets that would be used in the OIDC were stored in GitHub. Likewise, the password of one the infrastucture (virtual machine) to be deployed was also stored as a secret on GitHUb. During the deployments the password would be integrated with the virtual machine.
 
 ![image](Images/Config_secret.png)
 ![image](Images/Secrets.png)
 
-The application (client) and tenant (directory) ID are gotten from the registered app while the Azure Subscription ID is obtain from the Azure Subsrciption's page. The Azure Subscription ID is used to identify where to provision the resources while the other IDs are used to identify the service principal and the directory that will provide the token session during authentication.
+The application (client) and tenant (directory) IDs are obtained from the registered app while the Azure Subscription ID was obtained from the Azure Subsrciption's page. The Azure Subscription ID was used to identify which subscription to provision the resources while the other IDs are used to identify the service principal and the directory that will provide the access token during authentication.
 
 ![image](Images/AzureSub.png)
 
 ### Secret Reference in the Github workflow Deploy.yml file
 
-The secrets stored in the repository secret on GitHub are referenced in the Deploy.yml file while the password is referenced in the main.tf file. The former is utilized by the workflow to authenticate against Azure while the latter will be loaded to the Virtual machine during deployment allowing access to the VM.
+The secrets stored in the repository secret on GitHub are referenced in the workflow file while the password is referenced in the terraform file. The former is utilized by the workflow to authenticate against Microsoft Entra ID while the latter was loaded to the Virtual machine during deployment allowing access to the VM.
 
 ![image](Images/ymfile2.png)
 
 ### Terraform State Configuration with a storage account 
 
-For every deployment terraform runs on an ephemeral runner, as a result the terraform state are not stored. The drawback of this situation is that deployment conflicts will arise if the terraform file contains infrastructure that are already deployed which also prevents the reusability of the file. Getting around this will require the provisioning of a terraform state to store the details of already provisioned infrastructure.
+For every deployment, terraform runs on an ephemeral runner, as a result the terraform state are not stored. The drawback of this method is that deployment conflicts will arise if the terraform file contains infrastructure that are already deployed, this method also prevents the reusability of the file. Getting around this will require the provisioning of a terraform state to store the details of every provisioning made by terraform.
 
 Firstly, a new resource group was created, then a storage account and then a container. 
 
@@ -110,15 +110,15 @@ Firstly, a new resource group was created, then a storage account and then a con
 ![image](Images/satfstate.png)
 ![image](Images/contfstate.png)
 
-Finally, the new provision is referenced in the terraform file by updating the main.tf file, this ensures terraform refreshes its state during deployments 
+Afterwards, the new provision was referenced in the terraform file by updating the main.tf file, this ensures terraform refreshes its state during deployments 
 
 ![image](Images/reftfstate.png)
 
-The main function of this provision to store terraform state. This state is refreshed during a new deployment to acquire an inventory of existing infrastructure and compares it with what it is about to deploy (output of 'terraform plan' command), it ignores the infrastructure that are common to both parties and deploy ('terraform apply') the unique ones, thereby preventing conflict during provisioning and enhancing the reliability of this solution.
+The main function of this provisioning was to store terraform state. This state is refreshed during a new deployment to acquire an inventory of existing infrastructure and compares it with what it is about to deploy (output of 'terraform plan' command), it ignores the infrastructure that are common to both parties and deploy ('terraform apply') the unique ones, thereby preventing conflict during provisioning and enhancing the reliability of this solution.
 
  ### Testing of the CI/CD pipeline
 
-As mentioned earlier that this workflow is triggered whenever a push is made to its main branch. The main.tf file was just updated with the terraform state. Pushing it to the main branch simply triggers and run the workflow. Afterwards the workflow could be seen running.
+As mentioned earlier that this workflow is triggered whenever a push is made to its main branch. The main.tf file was just updated with the terraform state and pushing it to the main branch simply triggers and run the workflow. Afterwards the workflow could be seen running.
 
 ![image](Images/sucrun.png)
 ![image](Images/sucrun2.png)
@@ -133,7 +133,7 @@ Attempt was made to logon to the VM, but was unsuccessful.
 
 This error was troubleshot and it was discovered that the RDP port of the VM was not exposed to the internet. To expose the port, an NSG was created and associated with the subnet of the VM then a security rule was created to expose the port to the internet.
 
-To accomplish this task easily, the main.tf file was updated with the new infrastructure and pushed to the main branch,thereby triggering the workflow. 
+To accomplish this task easily, the main.tf file was updated with the new infrastructure and pushed to the main branch, thereby triggering the workflow. 
 
 ![image](Images/AttachNSG2.png)
 
@@ -145,11 +145,11 @@ Over here is the newly created NSG and its security rule.
 
 ![image](Images/NSGsuc.png)
 
-Had it been that the terraform state was not provisioned and attempt to reuse the main.tf file would have led into an error like the one below.
+Had it been that the terraform state was not provisioned and attempt to update and reuse the main.tf file would have led into an error just like the one below.
 
 ![image](Images/AttachNSGError.png)
 
-Note: Updating the main.tf file triggered the GitHub workflow which could be seen running. The results showed that the terraform state helped terraform to identify that other resources already exists in Azure while NSG is missing. This led to the deployment of NSG only. This terraform state did not only prevent deployment conflict but also saved time and allowed the reusage of the terraform file. 
+Note: Updating the main.tf file triggered the GitHub workflow which could be seen running. The results showed that the terraform state helped terraform to identify that other resources already exists in Azure while NSG is missing. This led to the deployment of NSG only. This terraform state did not only prevent deployment conflict but also saved time and allowed for thehe reusage of the terraform file. 
 
 With the implementation of the NSG and the appropriate security rule, the VM was successfully logged-on.
 
@@ -158,7 +158,7 @@ With the implementation of the NSG and the appropriate security rule, the VM was
 
 ### integrating Security to the Workflow with Checkov
 
-In integrating security with the workflow using Checkov, the resource group containing the infrastructure was deleted to create a clean slate. The main function of Checkov is to scan through the terraform files (main.tf) to identify any misconfiguration or security weakness. If any of it is found as a failed check, the workflow stops immediately; requiring the rectification of the misconfiguration manually. Sometimes, the failed checks could also be skipped if it seems not to be applicable. 
+In integrating security with the workflow using Checkov, the resource group containing the infrastructure was deleted to start afresh. The main function of Checkov is to scan through the terraform file (main.tf) to identify any misconfiguration or security weakness. If any of iwas found as a failed check, the workflow stops immediately; requiring the rectification of the misconfiguration manually. Sometimes, the failed checks could also be skipped if it seems not to be applicable. 
 
 Checkov is being integrated to the workflow. 
 
@@ -215,7 +215,7 @@ An attempt to logon to the VM via Azure Bastion was succesful.
 
 ### Integrating Terraform file formatting and Manual Approval to the Pipeline
 
-Having successfully integrated security to the workflow, extra efforts was spent in making the solution fit for production standard. Basically, this involves formating the terraform files and requiring approval for the deployments. The deployed infrastructure were also deleted and this projectis started from a clean slate.
+Having successfully integrated security to the workflow, extra efforts was spent in making the solution fit for production standard. Basically, this involves formating the terraform file and requiring approval for deployments. The deployed infrastructure were also deleted and this project starts with no infrastructure in place.
 
 The terraform file was formatted with the 'terraform fmt -recursive' command on codespace. 
 
@@ -248,7 +248,7 @@ Afterwards, a federated certifiate is created for it in Microsoft Entra ID while
 ![image](Images/newenv4.png)
 ![image](Images/newenv5.png)
 
-Additionally, the workflow is updated with the new development. The workflow now has two jobs, the first job is to run the steps from the initial stage up to terraform plan' command. Then the next job is to run the 'terraform apply' command on the output of the previous stage.
+Additionally, the workflow is updated with the new development. The workflow now has two jobs, the first job is to run the steps from the initial stage up to 'terraform plan' command. Then the next job is to run the 'terraform apply' command on the output of the previous stage.
 
 The first part of the job
 
@@ -259,19 +259,19 @@ The second part of the job.
 
 ![image](Images/manapproval3.png)
 
-Updating the workflow (yml file) triggers the workflow, while the workflow is running here is the relationship between the two jobs on GitHub.
+Updating the workflow file triggers the GitHub workflow, while the workflow is running, a relationship is observed between the two jobs on GitHub.
 
 ![image](Images/manapproval4.png)
 
-The first job is completed now requesting approval for the second job
+The first job has been completed, now requesting approval for the second job.
 
 ![image](Images/manapproval5.png)
 
-Here is the artifact output of the 'terraform plan' command, this gives the reviewver a glimpse of the infrastructure to be deployed. So the request could either be approved or canceled.
+Here is the artifact- output of the 'terraform plan' command, this gives the reviewver a glimpse of the infrastructure to be deployed. So the request could either be approved or canceled.
 
 ![image](Images/manapproval8.png)
 
-Providing the approval
+Providing the approval,
 
 ![image](Images/manapproval6.png)
 
@@ -279,7 +279,7 @@ After providing the approval the next job starts running
 
 ![image](Images/manapproval7.png)
 
-Now the successful completion of both jobs
+Both jobs have now been completed
 
 ![image](Images/manapproval9.png)
 ![image](Images/manapproval10.png)
@@ -288,14 +288,14 @@ With the successful completion of the jobs, the infrastructure are now deployed 
 
 ![image](Images/infra3.png)
 
-The virtual machine was logged-on via Azure Bastion succesfully, emphasizing the succesful dependencies of this solution.
+The virtual machine was logged-on via Azure Bastion succesfully, emphasizing the succesful implementation of the dependencies of this solution.
 
 ![image](Images/logonsuc4.png)
 ![image](Images/logonsuc5.png)
 
 ## Conclusion
 
-This project was succesfully completed demonstrating the relevance of automating infrastructure deployment with Terraform and GitHub Action, it also entails the integration of security checks with Checkov to detect security misconfigurations and weaknesses before deployment enabling a secured deployment of infrastructure. This project also covers improving the reliability of this solution making it fit for production use. It utilizes a terraform state to keep an inventory of deployed infrastructure thereby preventing deployment conflict and allowing the reusability of terraform files. Other enahancement of this solution is configuring it to request approval before the final deployment of resources enforcing security control and enhancing the security of the digital environment.
+This project was succesfully completed demonstrating the relevance of automating infrastructure deployment with Terraform and GitHub Action, it also entails the integration of security checks with Checkov to detect security misconfigurations and weaknesses before deployment enabling a secured deployment of infrastructure. This project also covers improving the reliability of this solution making it fit for use in a production environment. It also utilizes a terraform state to keep an inventory of deployed infrastructure thereby preventing deployment conflict and allowing the reusability of the terraform file for new deployments . Other enahancement of this solution is configuring it to request approval before the final deployment of resources enforcing security control and enhancing the security of the digital environment.
 
 
 
