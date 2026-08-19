@@ -286,6 +286,10 @@ With the successful completion of the jobs, the infrastructure are now deployed 
 ![image](Images/infra3.png)
 
 The 
+
+![image](Images/logonsuc4.png)
+![image](Images/logonsuc5.png)
+
 Completing the configuration, basically, chosing the user that will approve the deployments. 
 
 Updating this changes led to new updates, and pushing it to the branch triggered the workflow thereby ruuning it.
