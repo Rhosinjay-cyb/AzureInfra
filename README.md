@@ -285,15 +285,14 @@ With the successful completion of the jobs, the infrastructure are now deployed 
 
 ![image](Images/infra3.png)
 
-The 
+The virtual machine was logged-on via Azure Bastion succesfully, emphasizing the succesful dependencies of this solution.
 
 ![image](Images/logonsuc4.png)
 ![image](Images/logonsuc5.png)
 
-Completing the configuration, basically, chosing the user that will approve the deployments. 
+## Conclusion
 
-Updating this changes led to new updates, and pushing it to the branch triggered the workflow thereby ruuning it.
-
+This project was succesfully completed demonstrating the relevance of automating infrastructure deployment with Terraform and GitHub Action, it also entails the integration of security checks with Checkov to detect security misconfigurations and weaknesses before deployment enabling a secured deployment of infrastructure. This project also covers improving the reliability of this solution making it fit for production use. It utilizes a terraform state to keep an inventory of deployed infrastructure thereby preventing deployment conflict and allowing the reusability of terraform files. Other enahancement of this solution is configuring it to request approval before the final deployment of resources enforcing security control and enhancing the security of the digital environment.
 
 
 
