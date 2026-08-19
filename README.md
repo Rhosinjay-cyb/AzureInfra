@@ -217,7 +217,7 @@ An attempt to logon to the VM via Azure Bastion was succesful.
 
 Having successfully integrated security to the workflow, extra efforts was spent in making the solution fit for production standard. Basically, this involves formating the terraform file and requiring approval for deployments. The deployed infrastructure were also deleted and this project starts with no infrastructure in place.
 
-The terraform file was formatted with the 'terraform fmt -recursive' command on codespace. 
+The terraform file was formatted with the 'terraform fmt -recursive' command on codespaces. 
 
 ![image](Images/cdsp.png)
 
