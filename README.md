@@ -215,16 +215,77 @@ An attempt to logon to the VM via Azure Bastion was succesful.
 
 ### Integrating Terraform file formatting and Manual Approval to the Pipeline
 
-Having successfully integrated security to the workflow, extra efforts was spent in making the solution fit for production standard. Basically, this involves formating the terraform files and requiring approval for the deployments. 
+Having successfully integrated security to the workflow, extra efforts was spent in making the solution fit for production standard. Basically, this involves formating the terraform files and requiring approval for the deployments. The deployed infrastructure were also deleted and this projectis started from a clean slate.
 
-The terraform file was formatted with the 'terraform fmt check' command on codespace. However, some essential libraries including terraform were installed before running the command. After formatting the terraform file, the update was committed and pushed to the main branch.
+The terraform file was formatted with the 'terraform fmt -recursive' command on codespace. 
 
-To modify the workflow for the new development, the 'terraform fmt check' command was added to the workflow, this command checks if the terraform file is formatted, and proceeds to thenext action if 'true' and exits if false. 
+![image](Images/cdsp.png)
+
+However, some essential libraries including terraform were installed before running the command.
+
+![image](Images/cdsp2.png)
+![image](Images/cdsp3.png)
+
+After formatting the terraform file, the update was committed and pushed to the main branch.
+
+![image](Images/cdsp4.png)
+![image](Images/cdsp5.png)
+
+To modify the workflow for the new development, the 'terraform fmt check' command was added to the workflow, this command checks if the terraform file is formatted, and proceeds to the next action if 'true' and exits if false. 
 
 The second development is to enable the workflow request for approval before implementing the 'terraform apply' command, basically, deploying the infrastructure.
 
-To achieve this, a new environment is created on GitHub and a federated certifiate is created for it in Azure while using the earlier registered app.
+To achieve this, a new environment is created on GitHub and the protection of the environment is configured. 
 
+![image](Images/newenv2.png)
+![image](Images/newenv3.png)
+
+Afterwards, a federated certifiate is created for it in Microsoft Entra ID while using the earlier registered app.This allows the new environment to connect to Azure to deploy the infrastructure.
+
+![image](Images/newenv4.png)
+![image](Images/newenv5.png)
+
+Additionally, the worklow is updated with the new development. The workflow now has two jobs, the first job is to run the steps from the initial stage up to terraform plan' command. Then the next job is to run the 'terraform apply' command on the output of the previous stage.
+
+The first part of the job
+
+![image](Images/manapproval.png)
+![image](Images/manapproval2.png)
+
+The second part of the job.
+
+![image](Images/manapproval3.png)
+
+Updating the workflow (yml file) triggers the workflow, while the workflow is running here is the relationship between the two jobs on GitHub.
+
+![image](Images/manapproval4.png)
+
+The first job is completed now requesting approval for the second job
+
+![image](Images/manapproval5.png)
+
+Here is the artifact output of the 'terraform plan' command, this gives the reviewver a glimpse of the infrastructure to be deployed. So the request could either be approved or canceled.
+
+![image](Images/manapproval8.png)
+
+Providing the approval
+
+![image](Images/manapproval6.png)
+
+After providing the approval the next job starts running
+
+![image](Images/manapproval7.png)
+
+Now the successful completion of both jobs
+
+![image](Images/manapproval9.png)
+![image](Images/manapproval10.png)
+
+With the successful completion of the jobs, the infrastructure are now deployed in Azure.
+
+![image](Images/infra3.png)
+
+The 
 Completing the configuration, basically, chosing the user that will approve the deployments. 
 
 Updating this changes led to new updates, and pushing it to the branch triggered the workflow thereby ruuning it.
