@@ -27,11 +27,11 @@ Azure, Checkov, Codespace, GitHub GitHub Action, Microsoft Entra ID, Terraform
 
 ## Background
 
-The Dev team of a fictional organization has always reported the issue of infrastructure deployments with inherent security misconfigurations due to manual deployments alongside longer (mean-time-to-deploy) MTTD. This has affected the productivity of the team as well as undermining the security posture of the company's digital environment. Finding the solution to the problem was the motivation for this project. This project utilizes Terraform IaC for provisioning of Azure infrastructure through a GitHub Action CI/CD pipeline. It equally integrates Checkov to the workflow to detect misconfigurations before deployment alongside an approval ensuring every deployments are reviewed and authorised.
+The Dev team of a fictional organization has always reported the issue of infrastructure deployments with inherent security misconfigurations due to manual deployments alongside longer (mean-time-to-deploy) MTTD. This has affected the productivity of the team as well as undermining the security posture of the company's digital environment. Finding the solution to this challenge was the motivation for this project. This project utilizes Terraform IaC for provisioning of Azure infrastructure through a GitHub Action continuous integration & continuous delivery (CI/CD) pipeline. It equally integrates Checkov to the workflow to detect misconfigurations before deployment alongside an approval request ensuring every deployments are reviewed and authorised.
 
-The general workflow of this project starts when a push is made to the GitHub branch, this triggers the workflow to run each of the actions specified in it. The main action in the workflow is to logging-in to Azure, Setting-up Terraform and deploying the infrastructure into Azure. A storage account was provisioned to store the terrfaform state, this helps terraform to keep an inventory of infrastructure already provisioned, this prevents conflict during deployments thereby strengthening the reliability of this solution.
+The general workflow of this project starts when a push is made to the GitHub branch, this triggers the workflow to run each of the actions specified in it. The main actions in the workflow includes the workflow logging-in to Azure, Setting-up Terraform and deploying the infrastructure into Azure. In addition, a storage account was provisioned to store terrfaform state, this helps terraform to keep an inventory of infrastructure already provisioned, this prevents conflict during deployments thereby enhancing the reliability of this solution.
 
-Afterwards, security checks was also integrated into the workflow using Checkov to identify misconfigurations and eliminate them before deployments. To make this solution fit for production standard the terraform files are being formatted and the workflow was modified to require approval before deployment. 
+Afterwards, security checks was also integrated into the workflow using Checkov to identify misconfigurations and eliminate them before deployments. To make this solution fit for production standard the terraform file was formatted and the workflow was modified to require approval before deployment thereby preventing unauthorised deployments and other associated risks. 
 
 ## Steps Taken
 
@@ -39,20 +39,20 @@ The steps taken are in the following order.
 
 ###  Creation of GitHub Workflow and Terraform files 
 
-The Terraform file (main.tf) which contains the infrastructure to be deployed to Azure and the workflow file (Deploy.yml) were created in the repository. The GitHub Action is the CI/CD tool used in this project to automate the deployment of infrastructure specified in main.tf file to Azure. Hence, the Deploy.yml file relies on GitHub Action to execute each of the jobs specified in it. 
+The Terraform file (main.tf) which contains the infrastructure to be deployed to Azure and the workflow file (Deploy.yml) were created in the GitHub repository (AzureInfra). The GitHub Action is the CI/CD tool used in this project to automate the deployment of infrastructure specified in terraform file. Hence, the workflow file relies on GitHub Action to execute each of the actions specified in it. 
 
  ![image](Images/Githubfile.png)
 
 Note: The workflow file must be in the .github/workflows folder for the worflow to work effectively.
 
-Here is a snippet of what the terraform files looks like
+Here is a snippet of what the terraform file containing the list of resources to deployed to Azure looks like
 
  ![image](Images/Deployments1.png)
  ![image](Images/Deployments2.png)
 
 ### App Registration (GitHub Workflow) on Microsoft Entra ID
 
-For seamless operation of the GitHub workflow, it is first of all registered in Microsoft Entra ID as a service principal using 'App Registrations'. This identity (service principal) will be used to authenticate to Azure, Terraform will then make use of the session to deploy the infrastructure in Azure.
+For seamless operation of the GitHub workflow, it was firstly registered in Microsoft Entra ID as a service principal using 'App Registrations'. This identity (service principal) will be used to authenticate against Microsoft Entra ID where them provides a token session that allows the workflow to connect to Azure, Terraform then utilizes the session to deploy the infrastructure in Azure.
 
 ![image](Images/AppReg.png)
 
@@ -235,17 +235,20 @@ To modify the workflow for the new development, the 'terraform fmt check' comman
 
 The second development is to enable the workflow request for approval before implementing the 'terraform apply' command, basically, deploying the infrastructure.
 
-To achieve this, a new environment is created on GitHub and the protection of the environment is configured. 
+To achieve this, a new environment (Production) is created on GitHub. 
 
 ![image](Images/newenv2.png)
+
+Then the protection of the environment is configured, this include assigning users to review the approval and specifying a timeline for the approval. 
+
 ![image](Images/newenv3.png)
 
-Afterwards, a federated certifiate is created for it in Microsoft Entra ID while using the earlier registered app.This allows the new environment to connect to Azure to deploy the infrastructure.
+Afterwards, a federated certifiate is created for it in Microsoft Entra ID while using the earlier registered app. This allows the Production environment to connect to Azure to deploy the infrastructure having authenticated against Microsoft Entra ID with this newly created credential.
 
 ![image](Images/newenv4.png)
 ![image](Images/newenv5.png)
 
-Additionally, the worklow is updated with the new development. The workflow now has two jobs, the first job is to run the steps from the initial stage up to terraform plan' command. Then the next job is to run the 'terraform apply' command on the output of the previous stage.
+Additionally, the workflow is updated with the new development. The workflow now has two jobs, the first job is to run the steps from the initial stage up to terraform plan' command. Then the next job is to run the 'terraform apply' command on the output of the previous stage.
 
 The first part of the job
 
